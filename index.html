@@ -465,7 +465,7 @@ html[data-dev=tablet] .wrap[data-v=kdet]>.stack>.b,html[data-dev=desk] .wrap[dat
 </style></head><body><div id="app"></div><script>
 const FL={};
 
-const VER=41;
+const VER=42;
 /* ===== App: lokale Speicherung ===== */
 const DB='onlyworks',KEY='state';
 const idb=()=>new Promise((res,rej)=>{const r=indexedDB.open(DB,1);r.onupgradeneeded=()=>r.result.createObjectStore('kv');r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)});
@@ -510,7 +510,9 @@ const cnt=(j,st)=>j.shifts.reduce((a,s)=>a+cnts(s,st),0),free=j=>j.shifts.reduce
 const jq=j=>[...new Set(j.shifts.map(s=>s.qual))];
 const zr=n=>n===1?'Zeitraum':'Zeiträume';
 const shl=(j,s)=>s.label||(j.shifts.length>1?(rng(s)||'Zeitraum '+(j.shifts.indexOf(s)+1)):'Besetzung');
-const busy=(j,sh,p)=>j.shifts.some(o=>o!==sh&&['requested','confirmed','changeopen'].includes(o.people[p])&&o.date<=sh.end&&sh.date<=o.end);
+const shOv=(a,b)=>{const ae=a.end||a.date,be=b.end||b.date;if(!(a.date<=be&&b.date<=ae))return false;if(a.date===ae&&b.date===be&&a.date===b.date){const s1=tmz(a.start),e1=tmz(a.endT),s2=tmz(b.start),e2=tmz(b.endT);if(s1&&e1&&s2&&e2&&s1<e1&&s2<e2)return s1<e2&&s2<e1}return true};
+/* Belegt, wenn die Person in einem anderen Zeitraum – auch in einem anderen Job – angefragt, bestätigt oder mit offener Änderung eingetragen ist und sich die Termine überschneiden. Gibt den Job-Titel zurück. */
+const busy=(j,sh,p)=>{for(const x of S.jobs){if(x.arch&&x!==j)continue;for(const o of x.shifts){if(o!==sh&&['requested','confirmed','changeopen'].includes(o.people[p])&&shOv(o,sh))return x===j?(j.shifts.length>1?shl(j,o):j.title):x.title}}return ''};
 const log=(j,t)=>j.log.unshift(new Date().toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'})+' · '+t);
 const say=t=>{S.toast=t;render();clearTimeout(say.h);say.h=setTimeout(()=>{S.toast='';render()},3200)};
 const blkIn=(f,a,b)=>((f&&f.blocks)||[]).find(x=>x.from<=b&&a<=x.to),blkP=(p,sh)=>blkIn(S.fl.find(x=>x.name===p),sh.date,sh.end||sh.date),blkOn=(p,k)=>blkIn(S.fl.find(x=>x.name===p),k,k);
@@ -994,7 +996,7 @@ function shparts(j,sh,i){const s0=S.set,v=S.jd,rt=(x,z)=>`<option value=""${x?''
  tf=(k,l)=>`<label class=lb><small>${l}</small><span class=tw><input data-si=${i} data-sf=${k} type=time value="${esc(tmz(sh[k]))}"><button class=clr type=button data-a=clrt data-i=${i} data-k=${k} aria-label="${l} leeren"${tmz(sh[k])?'':' hidden'}>×</button></span></label>`,
  f=(k,l,t='text')=>`<label class=lb><small>${l}</small><input data-si=${i} data-sf=${k} type=${t} value="${esc(sh[k])}"></label>`,
  all=dayKeys(sh.date,sh.end||sh.date),dk=all.slice(0,45),live=j&&sh.id?j.shifts.find(x=>x.id===sh.id):null,
- cand=live?Object.keys(FL).filter(p=>!live.people[p]).map(p=>({p,n:[(live.qual&&!FL[p].includes(live.qual))&&'Qualifikation fehlt',!meets(p,live)&&'Nachweis fehlt',busy(j,live,p)&&'Termin überschneidet sich',blkP(p,live)&&'gesperrt'+(blkP(p,live).note?' ('+blkP(p,live).note+')':'')].filter(Boolean)})).sort((x,y)=>x.n.length-y.n.length||(isMe(y.p)?1:0)-(isMe(x.p)?1:0)||ncmp(x.p,y.p)):[],
+ cand=live?Object.keys(FL).filter(p=>!live.people[p]).map(p=>({p,n:[(live.qual&&!FL[p].includes(live.qual))&&'Qualifikation fehlt',!meets(p,live)&&'Nachweis fehlt',busy(j,live,p)&&'schon eingeplant: '+busy(j,live,p),blkP(p,live)&&'gesperrt'+(blkP(p,live).note?' ('+blkP(p,live).note+')':'')].filter(Boolean)})).sort((x,y)=>x.n.length-y.n.length||(isMe(y.p)?1:0)-(isMe(x.p)?1:0)||ncmp(x.p,y.p)):[],
  opts=[...new Set([...(s0.scheine?CT:[]),...(sh.req||[]).filter(r=>!r.startsWith(FSP))])],
  rq=sh.req||[],fs=rq.filter(r=>r.startsWith(FSP)),ss=rq.filter(r=>!r.startsWith(FSP)),
  op=(k,d0)=>S.qop&&S.qop[k]!==undefined?S.qop[k]:d0,
