@@ -465,7 +465,7 @@ html[data-dev=tablet] .wrap[data-v=kdet]>.stack>.b,html[data-dev=desk] .wrap[dat
 </style></head><body><div id="app"></div><script>
 const FL={};
 
-const VER=44;
+const VER=45;
 /* ===== App: lokale Speicherung ===== */
 const DB='onlyworks',KEY='state';
 const idb=()=>new Promise((res,rej)=>{const r=indexedDB.open(DB,1);r.onupgradeneeded=()=>r.result.createObjectStore('kv');r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)});
@@ -1172,7 +1172,7 @@ if(a==='wqyes'){const w=S.wq;S.wq=null;if(w){render();const l=document.createEle
  else if(a==='new'){S.nk={firma:''};render()}else if(a==='newk'){const nk=S.nk||{};S.nk=null;const tdy=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};S.edit='new';S.jd={kind:d.v||'p',mat:d.v&&d.v!=='p'&&S.mat.art.length?[{a:'',q:''}]:[],ml:{...ML0},title:'',firma:nk.firma||'',ort:'',inq:false,shifts:[{id:null,label:'',qual:'',req:[],needed:1,date:tdy(),end:tdy(),start:'',endT:'',travelIn:false,travelOut:false,travelRate:'',travelRateOut:'',offDays:[],offRate:'',meet:''}]};S.tab='job';render()}
  else if(a==='edit'){const x=J(S.sel);S.edit=1;S.jd={kind:x.kind||'p',mat:(x.mat||[]).map(m=>({a:m.a,q:fin(m.q)})),ml:Object.assign({},ML0,x.ml||{}),title:x.title,firma:x.firma,ort:x.ort,inq:!!x.inq,shifts:x.shifts.map(s=>({id:s.id,g:s.g,label:s.label,qual:s.qual,req:[...(s.req||[])],needed:s.needed,date:s.date,end:s.end,start:s.start,endT:s.endT,travelIn:s.travelIn,travelOut:s.travelOut,travelRate:s.travelRate,travelRateOut:rOut(s),offRate:s.offRate,offDays:[...s.offDays],meet:s.meet||''}))};render()}
  else if(a==='save')save();
- else if(a==='addsh'){const l=S.jd.shifts.at(-1);S.jd.shifts.push({id:null,label:'',qual:l&&(l.qual===''||QU.includes(l.qual))?l.qual:'',req:l&&(l.qual===''||QU.includes(l.qual))?[...(l.req||[])]:[],needed:1,date:l?l.date:'',end:l?l.end:'',start:'',endT:'',travelIn:false,travelOut:false,travelRate:'',travelRateOut:'',offDays:[],offRate:'',meet:l?l.meet||'':''});render()}
+ else if(a==='addsh'){const l=S.jd.shifts.at(-1);S.jd.shifts.push({id:null,label:'',qual:'',req:[],needed:1,date:l?l.date:'',end:l?l.end:'',start:'',endT:'',travelIn:false,travelOut:false,travelRate:'',travelRateOut:'',offDays:[],offRate:'',meet:l?l.meet||'':''});render()}
  else if(a==='rmsh'){S.jd.shifts.splice(+d.i,1);render()}
  else if(a==='qdel'){S.qdel=d.q;S.qedit=null;render()}else if(a==='qno'){S.qdel=null;S.qedit=null;render()}else if(a==='qedit'){S.qedit=d.q;S.qdel=null;render()}
  else if(a==='qsave'){const old=S.qedit,nv=$('#nqe').value.trim();if(!nv)return say('Bitte einen Namen eintragen');if(nv!==old&&known(nv))return say('Diese Qualifikation gibt es schon');if(nv!==old){QU[QU.indexOf(old)]=nv;S.fl.forEach(f=>{f.quals=f.quals.map(x=>x===old?nv:x);if(f.qimg&&f.qimg[old]){f.qimg[nv]=f.qimg[old];delete f.qimg[old]}});S.jobs.forEach(j=>j.shifts.forEach(s=>{if(s.qual===old)s.qual=nv}));if(S.fe){S.fe.quals=S.fe.quals.map(x=>x===old?nv:x);if(S.fe.qimg[old]){S.fe.qimg[nv]=S.fe.qimg[old];delete S.fe.qimg[old]}}if(S.jd)S.jd.shifts.forEach(s=>{if(s.qual===old)s.qual=nv});if(S.q===old)S.q=nv;if(S.fq===old)S.fq=nv;syncFL()}S.qedit=null;say(nv!==old?`„${old}“ umbenannt in „${nv}“`:'Gespeichert')}
