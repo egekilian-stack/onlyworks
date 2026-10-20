@@ -465,7 +465,7 @@ html[data-dev=tablet] .wrap[data-v=kdet]>.stack>.b,html[data-dev=desk] .wrap[dat
 </style></head><body><div id="app"></div><script>
 const FL={};
 
-const VER=43;
+const VER=44;
 /* ===== App: lokale Speicherung ===== */
 const DB='onlyworks',KEY='state';
 const idb=()=>new Promise((res,rej)=>{const r=indexedDB.open(DB,1);r.onupgradeneeded=()=>r.result.createObjectStore('kv');r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)});
@@ -1198,7 +1198,7 @@ if(a==='wqyes'){const w=S.wq;S.wq=null;if(w){render();const l=document.createEle
  else if(a==='blrm'){const f=S.fl.find(x=>x.id===S.fsel);if(f){f.blocks.splice(+d.i,1);render()}}
  else if(a==='bladd'){const f=S.fl.find(x=>x.id===S.fsel),b=S.bd;if(!f)return;if(!b.from)return say('Bitte ein Von-Datum wählen');let a0=b.from,z=b.to||b.from;if(z<a0)[a0,z]=[z,a0];f.blocks=f.blocks||[];f.blocks.push({from:a0,to:z,note:(b.note||'').trim()});f.blocks.sort((x,y)=>x.from.localeCompare(y.from));const clash=S.jobs.some(j=>j.shifts.some(s=>s.people[f.name]&&s.people[f.name]!=='declined'&&s.date<=z&&a0<=(s.end||s.date)));S.bd={from:'',to:'',note:''};say(clash?'Gesperrt – Achtung: in dem Zeitraum ist die Person schon eingeplant':'Sperre eingetragen')}
  else if(a==='bkx'){const txt=JSON.stringify({...snap(),mat:S.mat}),name=(()=>{const d=new Date(),p=n=>String(n).padStart(2,'0');return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+'_'+p(d.getHours())+'-'+p(d.getMinutes())+'_Backup.json'})(),ok=()=>{S.bk=today();persist();say('Sicherung erstellt')},dl=()=>{const b=new Blob([txt],{type:'application/json'}),u=URL.createObjectURL(b),el=document.createElement('a');el.href=u;el.download=name;document.body.appendChild(el);el.click();el.remove();setTimeout(()=>URL.revokeObjectURL(u),4000);ok()};
-  try{const f=new File([txt],name,{type:'application/json'});if(navigator.canShare&&navigator.canShare({files:[f]}))navigator.share({files:[f],title:'OnlyWorks Sicherung'}).then(ok).catch(e=>{if(!e||e.name!=='AbortError')dl()});else dl()}catch(e){dl()}}
+  try{const f=new File([txt],name,{type:'application/json'});if(navigator.canShare&&navigator.canShare({files:[f]}))navigator.share({files:[f]}).then(ok).catch(e=>{const n=e&&e.name;if(n==='AbortError')return;if(n==='TypeError'||n==='NotSupportedError'||n==='DataError')dl();else say('Teilen wurde nicht abgeschlossen. Prüfe in Dateien, ob die Sicherung schon gespeichert ist.')});else dl()}catch(e){dl()}}
  else if(a==='rsa'){S.rs=true;render()}else if(a==='rsn'){S.rs=false;render()}else if(a==='rsy'){S.rs=false;clean();S.sel=null;S.edit=null;S.jd=null;S.fsel=null;S.fe=null;S.tab='jobs';persist();say('Alle Daten gelöscht')}
  else if(a==='mo'){const t=new Date(S.mo.y,S.mo.m+ +d.v,1);S.mo={y:t.getFullYear(),m:t.getMonth()};render()}
  else if(a==='abv'){S.abv=true;S.abo={};render()}else if(a==='abvx'){S.abv=false;render()}else if(a==='abt'){const o=abOpen(j,d.k);S.abo=S.abo||{};S.abo[d.k]=!o;render()}else if(a==='fflt'){S.ffo=!S.ffo;render()}else if(a==='jflt'){S.jfo=!S.jfo;render()}else if(a==='jfx'){S.jf=[];render()}else if(a==='ffx'){S.ff=[];render()}else if(a==='me'){S.me=!S.me;render()}else if(a==='fnew'){S.fe={id:null,first:'',last:'',nick:'',phone:'',email:'',addr:'',rate:'',quals:[],lic:[],qimg:{},certs:[],ids:[]};render()}
